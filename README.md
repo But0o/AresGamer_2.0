@@ -140,15 +140,15 @@ python main.py
 
 ## 👥 Integrantes
 
-* Integrante 1
-* Integrante 2
-* Integrante 3
-* Integrante 4
+* [Sebastian Carini](https://github.com/Seuz1111)
+* [Ignacio Sandes](https://github.com/Ignacio2710)
+* [Mariano Quilindro](https://github.com/marianoquilindro)
+* [Agustin Lamendola](https://github.com/But0o)
 
 ---
 
 ## 🎓 Proyecto académico
 
-Trabajo práctico desarrollado para la materia **Programación**.
+Trabajo práctico desarrollado para la materia **Programación 2**.
 
 **AresGamer 2.0** — *Gestioná tus juegos. Organizá tus PCs.*
