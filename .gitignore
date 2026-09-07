@@ -1,0 +1,17 @@
+
+#Entorno virtual cada uno tiene su requierements.txt
+.venv/
+venv/
+env/
+
+#cache de python
+__pycache__/
+*.pyc
+
+#Config del editor
+.vscode/
+.idea/
+
+#Basura del sistema operativo
+Thumbs.db
+.DS_Store

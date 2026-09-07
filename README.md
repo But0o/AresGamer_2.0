@@ -80,6 +80,7 @@ AresGamer2.0/
 │
 ├── main.py
 ├── funciones/
+│   ├── menus.py
 │   ├── login.py
 │   ├── juegos.py
 │   ├── usuarios.py
@@ -90,6 +91,7 @@ AresGamer2.0/
 │   ├── cuentas.json
 │   └── instalaciones.json
 │
+├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
