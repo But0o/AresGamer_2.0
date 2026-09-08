@@ -1,8 +1,10 @@
 """ AresGamer 2.0"""
 
 from funciones.menu import mostrar_menu, pedir_opcion
+from funciones.juegos import mostrar_juegos, cargar_juegos
 
 TITULO = "===== AresGamer 2.0 ====="
+JUEGOS = cargar_juegos()
 
 opciones_inicio = {
     "1": "Login",
@@ -23,7 +25,7 @@ def menu_inicial():
         elif opcion == "2":
             print("\n[Pendiente] Busqueda de juegos disponibles.")
         elif opcion == "3":
-            print("\n[Pendiente] Listado de juegos en la biblioteca")
+            {mostrar_juegos(JUEGOS)}
         elif opcion == "4":
             print("\n[Pendiente] Consultar juegos instalados") 
         elif opcion == "5":
