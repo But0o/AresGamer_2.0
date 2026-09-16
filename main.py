@@ -2,6 +2,8 @@
 
 from funciones.menu import mostrar_menu, pedir_opcion
 from funciones.juegos import mostrar_juegos, cargar_juegos
+from funciones.usuarios import cargar_cuentas
+from funciones.instalaciones import cargar_instalaciones, pcs_de_juego
 
 TITULO = "===== AresGamer 2.0 ====="
 JUEGOS = cargar_juegos()
