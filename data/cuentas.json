@@ -1,0 +1,22 @@
+[
+  {
+    "usuario": "admin",
+    "contrasenia": "admin123",
+    "tipo": "admin"
+  },
+  {
+    "usuario": "PC01",
+    "contrasenia": "ciber01",
+    "tipo": "pc"
+  },
+  {
+    "usuario": "PC02",
+    "contrasenia": "ciber02",
+    "tipo": "pc"
+  },
+  {
+    "usuario": "PC03",
+    "contrasenia": "ciber03",
+    "tipo": "pc"
+  }
+]

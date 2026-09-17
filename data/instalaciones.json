@@ -1,0 +1,29 @@
+[
+  { "juego": "SOMA", "pc": "PC01" },
+  { "juego": "Alien: Isolation", "pc": "PC01" },
+  { "juego": "Call of Duty: World at War", "pc": "PC01" },
+  { "juego": "Worms W.M.D", "pc": "PC01" },
+  { "juego": "Sonic Lost World", "pc": "PC01" },
+  { "juego": "Combat Air Patrol 2: Military Flight Simulator", "pc": "PC01" },
+
+  { "juego": "SOMA", "pc": "PC02" },
+  { "juego": "Tomb Raider: Underworld", "pc": "PC02" },
+  { "juego": "Go Home Dinosaurs!", "pc": "PC02" },
+  { "juego": "Call of Duty: World at War", "pc": "PC02" },
+  { "juego": "Zombie Shooter", "pc": "PC02" },
+  { "juego": "Quantum Conundrum", "pc": "PC02" },
+
+  { "juego": "SOMA", "pc": "PC03" },
+  { "juego": "Alien: Isolation", "pc": "PC03" },
+  { "juego": "Worms W.M.D", "pc": "PC03" },
+  { "juego": "Command & Conquer 3 Tiberium Wars™", "pc": "PC03" },
+  { "juego": "Industry Giant 2", "pc": "PC03" },
+  { "juego": "SpaceChem", "pc": "PC03" },
+
+  { "juego": "SOMA", "pc": "PC04" },
+  { "juego": "Combat Air Patrol 2: Military Flight Simulator", "pc": "PC04" },
+  { "juego": "Sonic Lost World", "pc": "PC04" },
+  { "juego": "Zombie Shooter", "pc": "PC04" },
+  { "juego": "Tiny Brains", "pc": "PC04" },
+  { "juego": "Tales of Monkey Island: Complete Season", "pc": "PC04" }
+]
