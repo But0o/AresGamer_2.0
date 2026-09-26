@@ -106,10 +106,10 @@ La primera entrega tendrá como objetivo contar con la **idea y estructura princ
 
 **Funciones previstas:**
 
-* [ ] Login y diferenciación de usuarios.
+* [x] Login y diferenciación de usuarios.
 * [x] Listado de biblioteca.
 * [ ] Búsqueda de juegos.
-* [ ] Consulta de juegos instalados.
+* [x] Consulta de juegos instalados.
 
 ### Desarrollo restante
 
