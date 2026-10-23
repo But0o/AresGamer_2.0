@@ -1,0 +1,18 @@
+[
+  {
+    "usuario": "admin",
+    "clave": "admin123",
+    "rol": "admin"
+  },
+
+  {
+    "usuario": "PC-01",
+    "clave": "1234",
+    "rol": "pc"
+  },
+  {
+    "usuario": "PC-02",
+    "clave": "1234",
+    "rol": "pc"
+  }
+]
