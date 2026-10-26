@@ -145,6 +145,7 @@ python main.py
 | PC01    | 1234     | PC-Usuario    |
 | PC02    | 1234     | PC-Usuario    |
 | PC03    | 1234     | PC-Usuario    |
+| PC04    | 1234     | PC-Usuario    |
 
 El usuario no distingue mayúsculas de minúsculas; la clave sí. Se permiten hasta 3 intentos de login.
 

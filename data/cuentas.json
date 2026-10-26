@@ -18,5 +18,10 @@
     "usuario": "PC03",
     "clave": "1234",
     "rol": "pc"
+  },
+  {
+    "usuario": "PC04",
+    "clave": "1234",
+    "rol": "pc"
   }
 ]
