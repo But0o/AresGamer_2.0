@@ -83,7 +83,6 @@ AresGamer2.0/
 │   ├── menus.py
 │   ├── login.py
 │   ├── juegos.py
-│   ├── usuarios.py
 │   └── instalaciones.py
 │
 ├── data/
@@ -108,7 +107,7 @@ La primera entrega tendrá como objetivo contar con la **idea y estructura princ
 
 * [x] Login y diferenciación de usuarios.
 * [x] Listado de biblioteca.
-* [ ] Búsqueda de juegos.
+* [x] Búsqueda de juegos.
 * [x] Consulta de juegos instalados.
 
 ### Desarrollo restante
@@ -137,6 +136,18 @@ Ejecutar el programa:
 ```bash
 python main.py
 ```
+
+### 🔑 Cuentas de prueba
+
+| Usuario | Clave    | Rol           |
+|---------|----------|---------------|
+| admin   | admin123 | Administrador |
+| PC01    | 1234     | PC-Usuario    |
+| PC02    | 1234     | PC-Usuario    |
+| PC03    | 1234     | PC-Usuario    |
+
+El usuario no distingue mayúsculas de minúsculas; la clave sí. Se permiten hasta 3 intentos de login.
+
 
 ---
 

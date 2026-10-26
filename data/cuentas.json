@@ -1,22 +1,22 @@
 [
   {
     "usuario": "admin",
-    "contrasenia": "admin123",
-    "tipo": "admin"
+    "clave": "admin123",
+    "rol": "admin"
   },
   {
     "usuario": "PC01",
-    "contrasenia": "ciber01",
-    "tipo": "pc"
+    "clave": "1234",
+    "rol": "pc"
   },
   {
     "usuario": "PC02",
-    "contrasenia": "ciber02",
-    "tipo": "pc"
+    "clave": "1234",
+    "rol": "pc"
   },
   {
     "usuario": "PC03",
-    "contrasenia": "ciber03",
-    "tipo": "pc"
+    "clave": "1234",
+    "rol": "pc"
   }
 ]

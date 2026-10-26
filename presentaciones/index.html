@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>AresGamer 2.0 — Propuesta de software</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="dist/reset.css">
+<link rel="stylesheet" href="dist/reveal.css">
+<link rel="stylesheet" href="css/aresgamer.css">
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 1: Titulo -->
+    <section class="title-slide">
+      <div class="glow"></div>
+      <div class="badge">🎮</div>
+      <div class="kicker">Programación 2 · Propuesta de software</div>
+      <h1>AresGamer 2.0</h1>
+      <div class="tagline">Gestioná tus juegos. Organizá tus PCs.</div>
+      <div class="rule"></div>
+      <div class="entrega">Primera entrega — Propuesta al cliente y avance del equipo</div>
+      <div class="team">Sebastián Carini &nbsp;·&nbsp; Ignacio Sandes &nbsp;·&nbsp; Mariano Quilindro &nbsp;·&nbsp; Agustín Lamendola</div>
+    </section>
+
+    <!-- 2: El problema -->
+    <section>
+      <div class="kicker">El problema</div>
+      <div class="title">Los cibers y locales gamer controlan su catálogo a mano</div>
+      <div class="obj-row"><div class="obj-icon">🗒️</div><div class="obj-title">Registro manual y disperso</div><div class="obj-desc">Cada PC se controla a ojo, en papel o de memoria: no existe un registro centralizado del catálogo.</div></div>
+      <div class="obj-row"><div class="obj-icon">🔍</div><div class="obj-title">Difícil saber qué está instalado dónde</div><div class="obj-desc">El encargado no tiene forma rápida de consultar qué juego tiene cada máquina del local.</div></div>
+      <div class="obj-row"><div class="obj-icon">🧩</div><div class="obj-title">Alta rotación de juegos</div><div class="obj-desc">Instalar, mover o dar de baja títulos es un proceso informal y propenso a errores.</div></div>
+      <div class="obj-row"><div class="obj-icon">🔐</div><div class="obj-title">Sin control de permisos</div><div class="obj-desc">No hay una diferencia real entre quién administra el local y quién sólo usa una PC.</div></div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>02</span></div>
+    </section>
+
+    <!-- 3: Usuarios del sistema -->
+    <section>
+      <div class="kicker">A quién está dirigido</div>
+      <div class="title">¿Quiénes usan AresGamer 2.0?</div>
+      <div class="role-wrap">
+        <div class="role-card highlight">
+          <div class="role-head"><div class="role-icon">👑</div><div><div class="role-name">Administrador</div><div class="role-sub">Dueño o encargado del local</div></div></div>
+          <ul>
+            <li>Responsable de la biblioteca de juegos</li>
+            <li>Da de alta y de baja las PC del local</li>
+            <li>Decide qué se instala en cada máquina</li>
+            <li>Accede con permisos completos</li>
+          </ul>
+        </div>
+        <div class="role-card">
+          <div class="role-head"><div class="role-icon">🖥️</div><div><div class="role-name">PC-Usuario</div><div class="role-sub">Cada máquina disponible para jugar</div></div></div>
+          <ul>
+            <li>Es la cuenta de cada PC del ciber</li>
+            <li>La utilizan los clientes que juegan</li>
+            <li>Ve únicamente su propia biblioteca</li>
+            <li>Acceso limitado, sin tareas administrativas</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>03</span></div>
+    </section>
+
+    <!-- 4: Solucion propuesta -->
+    <section>
+      <div class="kicker">Nuestra propuesta</div>
+      <div class="title">Un sistema simple, local y siempre disponible</div>
+      <div class="two-col">
+        <div class="left">
+          <p>AresGamer 2.0 centraliza la biblioteca de juegos del local y controla, en tiempo real, qué título está instalado en cada PC-Usuario — todo desde una interfaz de consola clara y directa.</p>
+          <p class="muted">No depende de internet ni de una base de datos externa: toda la información vive en archivos locales, lista para consultarse en cualquier momento.</p>
+        </div>
+        <div class="right">
+          <div class="stat-card"><div class="emoji">💾</div><div><div class="big">100% offline</div><div class="label">Funciona sin conexión a internet</div></div></div>
+          <div class="stat-card"><div class="emoji">👥</div><div><div class="big">2 perfiles</div><div class="label">Administrador y PC-Usuario, con permisos distintos</div></div></div>
+          <div class="stat-card"><div class="emoji">🐍</div><div><div class="big">Liviano</div><div class="label">Python puro, sin licencias ni hardware exigente</div></div></div>
+        </div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>04</span></div>
+    </section>
+
+    <!-- 5: Funcionalidades principales -->
+    <section>
+      <div class="kicker">Funcionalidades</div>
+      <div class="title">Qué hace el sistema, en concreto</div>
+      <div class="feature-grid">
+        <div class="feature-card"><div class="emoji">📚</div><h4>Biblioteca centralizada</h4><p>Alta, baja y consulta de todos los juegos del local en un solo lugar.</p></div>
+        <div class="feature-card"><div class="emoji">🖥️</div><h4>Gestión de PCs</h4><p>Crear y administrar las cuentas de cada PC-Usuario del establecimiento.</p></div>
+        <div class="feature-card"><div class="emoji">🔗</div><h4>Control de instalaciones</h4><p>Saber en todo momento qué juego está asignado a cada máquina.</p></div>
+        <div class="feature-card"><div class="emoji">🔍</div><h4>Búsqueda rápida</h4><p>Encontrar un juego o consultar instalaciones en segundos.</p></div>
+        <div class="feature-card"><div class="emoji">🔐</div><h4>Permisos diferenciados</h4><p>Administrador y PC-Usuario con accesos distintos y controlados.</p></div>
+        <div class="feature-card"><div class="emoji">💾</div><h4>Todo offline</h4><p>Sin conexión a internet ni servidores externos que mantener.</p></div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>05</span></div>
+    </section>
+
+    <!-- 6: Ventajas -->
+    <section>
+      <div class="kicker">Propuesta de valor</div>
+      <div class="title">¿Por qué considerar esta propuesta?</div>
+      <div class="pitch-wrap">
+        <div class="pitch-col">
+          <h3>Ventajas para el local</h3>
+          <ul>
+            <li>Sin costos de licencias ni servidores</li>
+            <li>Funciona en PCs de gama baja, típicas de un ciber</li>
+            <li>Datos simples y portables (JSON), fáciles de respaldar</li>
+            <li>Interfaz clara, sin curva de aprendizaje</li>
+          </ul>
+        </div>
+        <div class="pitch-col">
+          <h3>Por qué elegir a este equipo</h3>
+          <ul>
+            <li>Plan de trabajo claro, ya en marcha</li>
+            <li>Entregas incrementales con avances verificables</li>
+            <li>Solución pensada a medida para cibers y locales gamer</li>
+            <li>Código simple, mantenible y fácil de ampliar</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>06</span></div>
+    </section>
+
+    <!-- 7: Organizacion interna -->
+    <section>
+      <div class="kicker">Cómo se organiza por dentro</div>
+      <div class="title">Simple también del lado técnico</div>
+      <div class="flow-row">
+        <div class="flow-chip">👑 Administrador / 🖥️ PC-Usuario</div>
+        <div class="flow-arrow">➜</div>
+        <div class="flow-chip">🐍 AresGamer 2.0 (Python)</div>
+        <div class="flow-arrow">➜</div>
+        <div class="flow-chip">📄 Datos en JSON</div>
+      </div>
+      <div class="json-wrap">
+        <div class="json-card"><div class="fname">📄 juegos.json</div><p>Biblioteca general: nombre, categoría, fecha de lanzamiento y peso.</p></div>
+        <div class="json-card"><div class="fname">📄 cuentas.json</div><p>Cuentas del sistema: Administrador y cada PC-Usuario.</p></div>
+        <div class="json-card"><div class="fname">📄 instalaciones.json</div><p>Qué juegos están asignados/instalados en cada PC.</p></div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>07</span></div>
+    </section>
+
+    <!-- 8: Demo -->
+    <section>
+      <div class="kicker">Demo</div>
+      <div class="title">Lo que ya se ve en consola</div>
+      <p class="subtle" style="margin-bottom:14px;">main.py carga juegos.json y renderiza el menú inicial con Tabulate. La opción "Listado de juegos en la biblioteca" ya imprime la tabla completa.</p>
+      <div class="term-window">
+        <div class="term-bar">
+          <div class="term-dot" style="background:#FF5F56;"></div>
+          <div class="term-dot" style="background:#FFBD2E;"></div>
+          <div class="term-dot" style="background:#27C93F;"></div>
+          <div class="term-title">main.py — python3</div>
+        </div>
+        <div class="term-body">===== AresGamer 2.0 =====
+
++------------+------------------------------------+
+| Opciones   | Descripcion                         |
++------------+------------------------------------+
+| 1          | Login                               |
+| 2          | Busqueda de juegos disponibles      |
+| 3          | Listado de juegos en la biblioteca  |
+| 4          | Consultar juegos instalados         |
+| 5          | Salir                               |
++------------+------------------------------------+
+
+Elegi una opcion: 3
+
++---------------------+-------------+----------------------+------+
+| Nombre              | Categoria/s | Fecha de Lanzamiento | Peso |
++---------------------+-------------+----------------------+------+
+| SOMA                | Action,...  | Sep 21, 2015          | 4 GB |
+| Alien: Isolation    | Action      | Oct 6, 2014           | 4 GB |
+| Worms W.M.D         | Action,...  | Aug 23, 2016          | 2 GB |
++---------------------+-------------+----------------------+------+</div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>08</span></div>
+    </section>
+
+    <!-- 9: Propuesta UX 1 Login y Menú -->
+    <section>
+      <div class="kicker">Propuesta de experiencia de usuario (UX)</div>
+      <div class="title">Primeras pantallas imaginadas — 1/2</div>
+      <div class="screens-row">
+        <div class="screen-frame">
+          <div class="wire-screen">
+            <div class="wire-topbar"><div class="wire-dot"></div><div class="wire-dot"></div><div class="wire-dot"></div><div class="wt-label">AresGamer 2.0</div></div>
+            <div class="wire-body">
+              <div class="wire-logo">🎮 AresGamer 2.0</div>
+              <div class="wire-subline">Sistema de gestión de juegos</div>
+              <div class="wire-field-label">Usuario</div>
+              <div class="wire-input"></div>
+              <div class="wire-field-label">Contraseña</div>
+              <div class="wire-input"></div>
+              <div class="wire-button">Ingresar</div>
+              <div class="wire-hint">El sistema detecta automáticamente si sos Administrador o PC-Usuario</div>
+            </div>
+          </div>
+          <div class="screen-caption"><b>Login</b> — acceso único para ambos perfiles</div>
+        </div>
+        <div class="screen-frame">
+          <div class="wire-screen">
+            <div class="wire-topbar"><div class="wire-dot"></div><div class="wire-dot"></div><div class="wire-dot"></div><div class="wt-label">Panel Administrador</div></div>
+            <div class="wire-body">
+              <div class="wire-menu-item"><span class="ic">📚</span> Biblioteca de juegos</div>
+              <div class="wire-menu-item"><span class="ic">🖥️</span> PC-Usuarios</div>
+              <div class="wire-menu-item"><span class="ic">🔗</span> Instalaciones</div>
+              <div class="wire-menu-item"><span class="ic">🔐</span> Permisos</div>
+              <div class="wire-menu-item"><span class="ic">🚪</span> Salir</div>
+            </div>
+          </div>
+          <div class="screen-caption"><b>Menú principal</b> — versión visual del menú de consola actual</div>
+        </div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>09</span></div>
+    </section>
+
+    <!-- 10: Propuesta UX 2 formulario y resultado -->
+    <section>
+      <div class="kicker">Propuesta de experiencia de usuario (UX)</div>
+      <div class="title">Primeras pantallas imaginadas — 2/2</div>
+      <div class="screens-row">
+        <div class="screen-frame">
+          <div class="wire-screen">
+            <div class="wire-topbar"><div class="wire-dot"></div><div class="wire-dot"></div><div class="wire-dot"></div><div class="wt-label">Agregar juego</div></div>
+            <div class="wire-body">
+              <div class="wire-field-label">Nombre</div>
+              <div class="wire-input"></div>
+              <div class="wire-field-label">Categoría</div>
+              <div class="wire-input"></div>
+              <div class="wire-field-label">Fecha de lanzamiento</div>
+              <div class="wire-input"></div>
+              <div class="wire-btn-row">
+                <div class="wire-button" style="flex:1;">Guardar</div>
+                <div class="wire-button ghost" style="flex:1;">Cancelar</div>
+              </div>
+            </div>
+          </div>
+          <div class="screen-caption"><b>Formulario</b> — alta de un nuevo juego en la biblioteca</div>
+        </div>
+        <div class="screen-frame">
+          <div class="wire-screen">
+            <div class="wire-topbar"><div class="wire-dot"></div><div class="wire-dot"></div><div class="wire-dot"></div><div class="wt-label">Buscar juego</div></div>
+            <div class="wire-body">
+              <div class="wire-search">🔍&nbsp; "action"</div>
+              <div class="wire-result"><div class="rtitle">SOMA</div><div class="rmeta">Action, Adventure, Indie &nbsp;·&nbsp; <span class="wire-tag">PC-02</span></div></div>
+              <div class="wire-result"><div class="rtitle">Alien: Isolation</div><div class="rmeta">Action &nbsp;·&nbsp; <span class="wire-tag">PC-05</span></div></div>
+              <div class="wire-result"><div class="rtitle">Worms W.M.D</div><div class="rmeta">Action, Strategy &nbsp;·&nbsp; <span class="wire-tag">Sin instalar</span></div></div>
+            </div>
+          </div>
+          <div class="screen-caption"><b>Resultado de búsqueda</b> — consulta de juegos e instalaciones</div>
+        </div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>10</span></div>
+    </section>
+
+    <!-- 11: Estado actual -->
+    <section>
+      <div class="kicker">Avance del equipo</div>
+      <div class="title">Estado actual — primera entrega</div>
+      <div class="progress-wrap">
+        <div class="progress-hero">
+          <div class="cap">Funciones previstas</div>
+          <div class="fraction">1 / 4</div>
+          <div class="cap">ya funcionando en consola</div>
+          <div class="rule"></div>
+          <div class="note">El menú principal, la carga de datos y la tabla de la biblioteca ya están operativos de punta a punta.</div>
+        </div>
+        <div class="check-list">
+          <div class="check-item"><div class="check-dot done">✓</div><div class="check-name">Listado de biblioteca</div><div class="check-status done">Hecho</div></div>
+          <div class="check-item"><div class="check-dot pending">…</div><div class="check-name">Login y diferenciación de usuarios</div><div class="check-status pending">Pendiente</div></div>
+          <div class="check-item"><div class="check-dot pending">…</div><div class="check-name">Búsqueda de juegos</div><div class="check-status pending">Pendiente</div></div>
+          <div class="check-item"><div class="check-dot pending">…</div><div class="check-name">Consulta de juegos instalados</div><div class="check-status pending">Pendiente</div></div>
+        </div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>11</span></div>
+    </section>
+
+    <!-- 12: Plan de entrega -->
+    <section>
+      <div class="kicker">Plan de entrega</div>
+      <div class="title">Desarrollo restante, después de esta entrega</div>
+      <div class="roadmap">
+        <div class="line"></div>
+        <div class="steps">
+          <div class="rstep">
+            <div class="top"><h4>Login funcional</h4><p>Autenticación real y diferenciación Administrador / PC-Usuario.</p></div>
+            <div class="rnum">1</div>
+            <div class="bottom"></div>
+          </div>
+          <div class="rstep">
+            <div class="top"></div>
+            <div class="rnum">2</div>
+            <div class="bottom"><h4>Búsqueda y consultas</h4><p>Búsqueda de juegos y consulta de instalados por PC.</p></div>
+          </div>
+          <div class="rstep">
+            <div class="top"><h4>Funciones administrativas</h4><p>Agregar/eliminar juegos, crear/eliminar PC-Usuarios, modificar instalaciones.</p></div>
+            <div class="rnum">3</div>
+            <div class="bottom"></div>
+          </div>
+          <div class="rstep">
+            <div class="top"></div>
+            <div class="rnum">4</div>
+            <div class="bottom"><h4>Permisos y listados</h4><p>Gestión de permisos y listados administrativos completos.</p></div>
+          </div>
+          <div class="rstep">
+            <div class="top"><h4>Pruebas finales</h4><p>Pruebas de punta a punta y corrección de errores.</p></div>
+            <div class="rnum">5</div>
+            <div class="bottom"></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bar"><span>AresGamer 2.0 · Propuesta de software</span><span>12</span></div>
+    </section>
+
+    <!-- 13: Cierre -->
+    <section class="closing-slide">
+      <div class="glow"></div>
+      <div class="kicker" style="position:relative;">Gracias</div>
+      <div class="title" style="position:relative;">Equipo AresGamer</div>
+      <div class="team-grid">
+        <div class="team-card"><div class="team-avatar">🧑‍💻</div><div class="team-name">Sebastián Carini</div><div class="team-handle">github.com/Seuz1111</div></div>
+        <div class="team-card"><div class="team-avatar">🧑‍💻</div><div class="team-name">Ignacio Sandes</div><div class="team-handle">github.com/Ignacio2710</div></div>
+        <div class="team-card"><div class="team-avatar">🧑‍💻</div><div class="team-name">Mariano Quilindro</div><div class="team-handle">github.com/marianoquilindro</div></div>
+        <div class="team-card"><div class="team-avatar">🧑‍💻</div><div class="team-name">Agustín Lamendola</div><div class="team-handle">github.com/But0o</div></div>
+      </div>
+      <div class="rule"></div>
+      <div class="line1">Trabajo práctico académico — Programación 2</div>
+      <div class="line2">Repositorio: github.com/But0o/AresGamer_2.0</div>
+    </section>
+
+  </div>
+</div>
+
+<script src="dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    width: 1280,
+    height: 720,
+    margin: 0,
+    minScale: 0.2,
+    maxScale: 2,
+    hash: true,
+    controls: true,
+    progress: true,
+    center: false,
+    transition: 'slide',
+    backgroundTransition: 'fade'
+  });
+</script>
+</body>
+</html>

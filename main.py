@@ -1,10 +1,9 @@
 """ AresGamer 2.0"""
 
 from funciones.menu import mostrar_menu, pedir_opcion
-from funciones.juegos import mostrar_juegos, cargar_juegos
-from funciones.usuarios import cargar_cuentas
-from funciones.instalaciones import cargar_instalaciones, pcs_de_juego
-from funciones.login import login
+from funciones.juegos import mostrar_juegos, cargar_juegos, buscar_juegos
+from funciones.instalaciones import cargar_instalaciones
+from funciones.login import cargar_cuentas, iniciar_sesion
 
 TITULO = "===== AresGamer 2.0 ====="
 JUEGOS = cargar_juegos()
@@ -37,19 +36,21 @@ def menu_inicial():
         opcion = pedir_opcion(opciones_no_logueado)
 
         if opcion == "1":
-            cuentas = cargar_cuentas()
-            usuario_ingresado = input("\nUsuario: ").strip()
-            contraseña_ingresada = input("Contraseña: ").strip()
-            cuenta = login(usuario_ingresado, contraseña_ingresada, cuentas)
+            try:
+                cuentas = cargar_cuentas()
+                cuenta = iniciar_sesion(cuentas)
+            except (FileNotFoundError, ValueError) as error:
+                print("\nError al cargar las cuentas:", error)
+                continue
 
             if cuenta is None:
-                print("Usuario o contraseña incorrectos.")
+                print("\nDemasiados intentos fallidos. Volviendo al menu")
             else:
                 usuario_actual = cuenta
                 print("\nBienvenido, " + cuenta["usuario"] + ".")
 
                 while usuario_actual is not None:
-                    if usuario_actual["tipo"] == "admin":
+                    if usuario_actual["rol"] == "admin":
                         opciones_menu = opciones_admin
                     else:
                         opciones_menu = opciones_pc
@@ -62,7 +63,16 @@ def menu_inicial():
                         instalaciones = cargar_instalaciones()
                         mostrar_juegos(JUEGOS, instalaciones, usuario_actual)
                     elif descripcion == "Buscar juego":
-                        print("\n[Pendiente] Buscar juego.")
+                        texto = input("\nIngresa nombre o categoria a buscar: ").strip()
+                        if texto == "":
+                            print("Tenes que escribir algo para buscar")
+                        else:
+                            resultados = buscar_juegos(JUEGOS, texto)
+                            if len(resultados) == 0:
+                                print("No se encontraron juegos para '" + texto + "'")
+                            else:
+                                instalaciones = cargar_instalaciones()
+                                mostrar_juegos(resultados, instalaciones, usuario_actual)
                     elif descripcion == "Agregar juego":
                         print("\n[Pendiente] Agregar juego.")
                     elif descripcion == "Eliminar juego":
