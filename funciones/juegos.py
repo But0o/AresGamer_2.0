@@ -2,7 +2,12 @@ import json
 from tabulate import tabulate
 from funciones.instalaciones import pcs_de_juego
 
-def mostrar_juegos(juegos: list[dict], instalaciones: list[dict], usuario: dict) -> None:
+CAMPOS_JUEGO = ["nombre", "categoria", "fecha_lanzamiento", "peso"]
+
+
+def mostrar_juegos(
+    juegos: list[dict], instalaciones: list[dict], usuario: dict
+) -> None:
     """
     Muestra la lista de juegos en una tabla, adaptada segun el tipo de usuario.
 
@@ -27,21 +32,45 @@ def mostrar_juegos(juegos: list[dict], instalaciones: list[dict], usuario: dict)
         for juego in juegos:
             pcs = pcs_de_juego(juego["nombre"], instalaciones)
             if pcs:
-                instalado_en = ", ".join(pcs)   # unir la lista pcs en un string separado por coma
+                instalado_en = ", ".join(
+                    pcs
+                )  # unir la lista pcs en un string separado por coma
             else:
                 instalado_en = "-"
-            filas.append([juego["nombre"], juego["categoria"], juego["fecha_lanzamiento"], juego["peso"], instalado_en])
-        headers = ["Nombre", "Categoria/s", "Fecha de Lanzamiento", "Peso", "Instalado en"]
+            filas.append(
+                [
+                    juego["nombre"],
+                    juego["categoria"],
+                    juego["fecha_lanzamiento"],
+                    juego["peso"],
+                    instalado_en,
+                ]
+            )
+        headers = [
+            "Nombre",
+            "Categoria/s",
+            "Fecha de Lanzamiento",
+            "Peso",
+            "Instalado en",
+        ]
 
     elif usuario["rol"] == "pc":
         for instalacion in instalaciones:
             if instalacion["pc"] == usuario["usuario"]:
                 juego = buscar_juego(instalacion["juego"], juegos)
                 if juego:
-                    filas.append([juego["nombre"], juego["categoria"], juego["fecha_lanzamiento"], juego["peso"]])
+                    filas.append(
+                        [
+                            juego["nombre"],
+                            juego["categoria"],
+                            juego["fecha_lanzamiento"],
+                            juego["peso"],
+                        ]
+                    )
         headers = ["Nombre", "Categoria/s", "Fecha de Lanzamiento", "Peso"]
 
     print(tabulate(filas, headers=headers, tablefmt="grid"))
+
 
 def cargar_juegos() -> list[dict]:
     """
@@ -53,9 +82,25 @@ def cargar_juegos() -> list[dict]:
     Postcondicion: devuelve una lista de diccionarios tal cual estan en el
         archivo. No valida ni filtra nada, solo carga.
     """
-    with open("data/juegos.json", "r", encoding="utf-8") as archivo:
-        juegos = json.load(archivo)
+    try:
+        with open("data/juegos.json", "r", encoding="utf-8") as archivo:
+            juegos = json.load(archivo)
+    except FileNotFoundError:
+        raise FileNotFoundError("No se econtro el archivo data/juegos.json")
+    except json.JSONDecodeError:
+        raise ValueError("juegos.json tiene un formato inválido")
+
+    if not isinstance(juegos, list):
+        raise ValueError("juegos.json debe contener una lista de juegos")
+
+    for juego in juegos:
+        if not isinstance(juego, dict):
+            raise ValueError("juegos.json: hay un elemento que no es un juego válido")
+        for campo in CAMPOS_JUEGO:
+            if campo not in juego:
+                raise ValueError(f"juegos.json: a un juego le falta el campo {campo}")
     return juegos
+
 
 def buscar_juego(nombre: str, juegos: list[dict]) -> dict | None:
     """
@@ -71,6 +116,7 @@ def buscar_juego(nombre: str, juegos: list[dict]) -> dict | None:
         if juego["nombre"] == nombre:
             return juego
     return None
+
 
 def buscar_juegos(juegos: list[dict], texto: str) -> list[dict]:
     """
