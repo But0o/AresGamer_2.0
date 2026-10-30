@@ -134,6 +134,19 @@ def buscar_juegos(juegos: list[dict], texto: str) -> list[dict]:
     return resultados
 
 
+def buscar_juego_por_nombre(juegos: list[dict], nombre: str) -> dict | None:
+    """
+    Contrato: busca un juego por si nombre exacto
+    Precondiciones: juegos es una lista de diccionarios con la clave "nombre", nombre es un string
+    Postcondiciones: Devuelve el diccionario del juego o None si no existe
+    """
+    for juego in juegos:
+        if juego["nombre"].lower() == nombre.lower():
+            return juego
+
+    return None
+
+
 def guardar_juegos(juegos: list[dict]) -> None:
     """
     Contrato: Guarda la biblioteca completa de juegos en data/juegos.json

@@ -7,8 +7,14 @@ from funciones.juegos import (
     buscar_juegos,
     guardar_juegos,
     pedir_datos_juego,
+    buscar_juego_por_nombre,
 )
-from funciones.instalaciones import cargar_instalaciones
+from funciones.instalaciones import (
+    cargar_instalaciones,
+    guardar_instalaciones,
+    quitar_instalaciones_de_juego,
+    pcs_de_juego,
+)
 from funciones.login import cargar_cuentas, iniciar_sesion
 
 TITULO = "===== AresGamer 2.0 ====="
@@ -99,6 +105,66 @@ def agregar_juego(juegos: list[dict], usuario: dict) -> None:
     print(f"Juego '{nuevo['nombre']}' agregado correctamente")
 
 
+def eliminar_juego(juegos: list[dict], usuario: dict) -> None:
+    """
+    Contrato: Elimina un juego de la biblioteca y de las PC donde esta instalado y guarda los cambios en data/juegos.json y data/instalaciones.json
+    Precondiciones: juegos es la lista de juegos cargada en memoria, usuario es el diccionario del admin logueado
+    Postcondiciones: Si el admin confirma y el guardado funciona el juego se quita de juegos y de instalaciones.json
+    """
+    nombre = input("Nombre del juego a eliminar (vacío para cancelar): ").strip()
+
+    if nombre == "":
+        print("Operación cancelada")
+        return
+
+    juego = buscar_juego_por_nombre(juegos, nombre)
+
+    if juego is None:
+        print(f"No existe ningún juego llamado '{nombre}'")
+        return
+
+    try:
+        instalaciones = cargar_instalaciones()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar las instalaciones: {error}")
+        return
+
+    pcs = pcs_de_juego(juego["nombre"], instalaciones)
+
+    print(f"Juego a eliminar: {juego['nombre']}")
+    if len(pcs) > 0:
+        print(f"Esta instalado en: {', '.join(pcs)}. También se quitará de esas PCs")
+
+    if not confirmar("¿Eliminarlo definitivamente? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    posicion = juegos.index(juego)
+    juegos.remove(juego)
+
+    try:
+        guardar_juegos(juegos)
+    except OSError as error:
+        juegos.insert(
+            posicion, juego
+        )  # para que coincida lo que hay en memoria y lo que hay en archivo
+        print(f"No se elimino el juego: {error}")
+        return
+
+    if len(pcs) > 0:
+        try:
+            guardar_instalaciones(
+                quitar_instalaciones_de_juego(instalaciones, juego["nombre"])
+            )
+        except OSError as error:
+            print(
+                f"Juego eliminado, pero no se pudieron actualizar las instalaciones: {error}"
+            )
+            return
+
+    print(f"Juego '{juego['nombre']}' eliminado correctamente")
+
+
 def hacer_login() -> dict | None:
     """
     Conrtato: Carga las cuentas e inicia el proceso de login por consola
@@ -146,9 +212,9 @@ def menu_sesion(juegos: list[dict], usuario: dict) -> None:
         elif descripcion == "Buscar juego":
             buscar_en_biblioteca(juegos, usuario)
         elif descripcion == "Agregar juego":
-            agregar_juego(juegos,usuario)
+            agregar_juego(juegos, usuario)
         elif descripcion == "Eliminar juego":
-            print("[Pendiente] Eliminar juego")
+            eliminar_juego(juegos,usuario)
         elif descripcion == "Consultar juegos instalados":
             print("[Pendiente] Consultar juegos instalados")
 
