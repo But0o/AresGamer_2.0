@@ -114,7 +114,7 @@ La primera entrega tendrá como objetivo contar con la **idea y estructura princ
 
 Luego de la primera entrega se completarán las funciones administrativas:
 
-* [ ] Agregar / eliminar juegos.
+* [x] Agregar / eliminar juegos.
 * [ ] Agregar / eliminar PC-Usuarios.
 * [ ] Modificar juegos instalados.
 * [ ] Gestión de permisos.
