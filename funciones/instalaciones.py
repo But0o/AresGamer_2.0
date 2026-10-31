@@ -70,7 +70,7 @@ def guardar_instalaciones(instalaciones: list[dict]) -> None:
         contenido = "[\n" + ",\n".join(filas) + "\n]"
 
     try:
-        with open("data/instalaciones.json" "w", encoding="utf-8") as archivo:
+        with open("data/instalaciones.json", "w", encoding="utf-8") as archivo:
             archivo.write(contenido)
     except FileNotFoundError:
         raise FileNotFoundError("No se encontro la carpeta data/.")
@@ -80,7 +80,9 @@ def guardar_instalaciones(instalaciones: list[dict]) -> None:
         raise OSError(f"No se pudo guardar data/instalaciones.json ({error})")
 
 
-def quitar_instalaciones_de_juego(instalaciones: list[dict], nombre_juego: str) -> list[dict]:
+def quitar_instalaciones_de_juego(
+    instalaciones: list[dict], nombre_juego: str
+) -> list[dict]:
     """
     Contrato: Devuelve las instalaciones sin las que corresponden a un juego
     Precondiciones: instalaciones es la lista devuelta por cargar_instalaciones
@@ -93,3 +95,49 @@ def quitar_instalaciones_de_juego(instalaciones: list[dict], nombre_juego: str) 
             restantes.append(instalacion)
 
     return restantes
+
+
+def juegos_instalados_en(instalaciones: list[dict], pc: str) -> list[str]:
+    """
+    Contrato: Devuelve los nombres de los juegos instalados en una PC
+    Precondiciones: instalaciones es la lista devuelta por cargar_instalaciones
+    Postcondiciones: Devuelve una lista nueva con los nombres de los juegos de esa PC, en el orden del archivo (vacía si no tiene ninguno)
+    """
+
+    nombres = []
+
+    for instalacion in instalaciones:
+        if instalacion["pc"] == pc:
+            nombres.append(instalacion["juego"])
+
+    return nombres
+
+
+def instalar_juego(instalaciones: list[dict], nombre_juego: str, pc: str) -> bool:
+    """
+    Contrato: Agrega una instalación (juego en una PC) a la lista, sin permitir duplicados
+    Precondiciones: instalaciones es la lista devuelta por cargar_instalaciones
+    Postcondiciones: Si el juego no estaba instalado en esa PC, lo agrega al final de instalaciones y devuelve True, si ya estaba no lo agrega y devuelve False
+    """
+    if nombre_juego in juegos_instalados_en(instalaciones, pc):
+        return False
+
+    instalaciones.append({"juego": nombre_juego, "pc": pc})
+
+    return True
+
+
+def desinstalar_juego(instalaciones: list[dict], nombre_juego: str, pc: str) -> bool:
+    """
+    Contrato: Saca de la lista la instalacion de un juego en una PC
+    Precondiciones: instalaciones es la lista devuelta por cargar_instalaciones
+    Postcondiciones: Si el juego estaba instalado en esa PC, lo saca de instalaciones y devuelve True, si no estaba no cambia nada y devuelve False
+    """
+    i = 0
+
+    while i < len(instalaciones):
+        if instalaciones[i]["juego"] == nombre_juego and instalaciones[i]["pc"] == pc:
+            instalaciones.pop(i)
+            return True
+        i += 1
+    return False
