@@ -14,6 +14,9 @@ from funciones.instalaciones import (
     guardar_instalaciones,
     quitar_instalaciones_de_juego,
     pcs_de_juego,
+    juegos_instalados_en,
+    instalar_juego,
+    desinstalar_juego,
 )
 from funciones.login import cargar_cuentas, iniciar_sesion
 
@@ -27,7 +30,9 @@ opciones_admin = {
     "3": "Agregar juego",
     "4": "Eliminar juego",
     "5": "Consultar juegos instalados",
-    "6": "Cerrar sesion",
+    "6": "Instalar juego en una PC",
+    "7": "Desinstalar juego de una PC",
+    "8": "Cerrar sesion",
 }
 
 opciones_pc = {
@@ -165,6 +170,169 @@ def eliminar_juego(juegos: list[dict], usuario: dict) -> None:
     print(f"Juego '{juego['nombre']}' eliminado correctamente")
 
 
+def pedir_pc(cuentas: list[dict]) -> str | None:
+    """
+    Contrato: Pide el nombre de una PC-Usuario hasta que sea una cuenta existente con rol "pc"
+    Precondiciones: cuentas es la lista devuelta por cargar_cuentas
+    Postcondiciones: Devuelve el nombre de la PC (ej: "PC01"). Devuelve Nibe si no hay PC-Usuario o si se ingresa vacío en el nombre
+    """
+    pcs = []
+
+    for cuenta in cuentas:
+        if cuenta["rol"] == "pc":
+            pcs.append(cuenta["usuario"])
+
+    if len(pcs) == 0:
+        print("No hay PC-Usuarios registradas")
+        return None
+
+    print(f"PCs disponibles: {', '.join(pcs)}")
+
+    while True:
+        nombre = input("Nombre de la PC (vacío para cancelar): ").strip()
+
+        if nombre == "":
+            return None
+
+        for pc in pcs:
+            if pc.lower() == nombre.lower():
+                return pc
+
+        print(f"No existe la PC '{nombre}'")
+
+
+def pedir_juego(juegos: list[dict]) -> dict | None:
+    """
+    Contrato: Pide el nombre de un juego hasta que exista en la biblioteca
+    Precondiciones: juegos es la lista de juegos cargada en memoria
+    Postcondiciones: Devuelve el diccionario del juego. Devuelve None si se deja el nombre vacío
+    """
+    while True:
+        nombre = input("Nombre del juego (vacío para cancelar): ").strip()
+
+        if nombre == "":
+            return None
+
+        juego = buscar_juego_por_nombre(juegos, nombre)
+
+        if juego is not None:
+            return juego
+
+        print(f"No existe el juego llamado '{nombre}'")
+
+
+def elegir_pc() -> tuple[str, list[dict]] | None:
+    """
+    Contrato: Carga las cuentas y las instalaciones, y le pide al admin que elija una PC-Usuario
+    Precondiciones: Existe data/cuentas.json y data/instalaciones.json con formato válido
+    Postcondiciones: Devuelve una tupla (pc, instalaciones) con la PC elegida y la lista de instalaciones cargada. Devuelve None si no se pudieron cargar los archivos o si el admin cancela
+    """
+    try:
+        cuentas = cargar_cuentas()
+        instalaciones = cargar_instalaciones()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar los datos: {error}")
+        return None
+
+    pc = pedir_pc(cuentas)
+
+    if pc is None:
+        print("Operación cancelada")
+        return None
+
+    return pc, instalaciones
+
+
+def instalar_en_pc(juegos: list[dict], usuario: dict) -> None:
+    """
+    Contrato: Instala un juego de la biblioteca en una PC-Usuario y guarda el cambio en data/instalaciones.json
+    Precondiciones: juegos es la lista de juegos cargada en memoria. usuario es el diccionario del admin logueado
+    Postcondiciones: Si el admin confirma y el guardado funciona, instalaciones.json queda con la instalación nueva, si cancela, el guardado falla o el juego ya estaba instalado en esa PC, el archivo queda sin cambios
+    """
+    eleccion = elegir_pc()
+
+    if eleccion is None:
+        return
+
+    pc, instalaciones = eleccion
+
+    juego = pedir_juego(juegos)
+
+    if juego is None:
+        print("Operación cancelada")
+        return
+
+    if juego["nombre"] in juegos_instalados_en(instalaciones, pc):
+        print(f"'{juego['nombre']}' ya está instalado en {pc}")
+        return
+
+    if not confirmar(f"¿Instalar '{juego['nombre']}' en {pc}? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    instalar_juego(instalaciones, juego["nombre"], pc)
+
+    try:
+        guardar_instalaciones(instalaciones)
+    except OSError as error:
+        print(f"No se instalo el juego: {error}")
+        return
+
+    print(f"Juego: '{juego['nombre']}' instalado en {pc}")
+
+
+def desinstalar_de_pc(juegos: list[dict], usuario: dict) -> None:
+    """
+    Contrato: Desinstala un juego de una Pc-Usuario y guarda el cambio en data/instalaciones.json
+    Precondiciones: juegos es la lista de juegos cargada en memoria. usuario es el diccionario del admin logueado
+    Postcondiciones: Si el admin confirma y el guardado funciona, instalaciones.json queda sin esa instalación. Si cancela, el guardado falla o la PC no tiene ese juego, el archivo queda sin cambios
+    """
+    eleccion = elegir_pc ()
+
+    if eleccion is None:
+        return
+
+    pc, instalaciones = eleccion
+
+    instalados = juegos_instalados_en(instalaciones, pc)
+
+    if len(instalados) == 0:
+        print(f"{pc} no tiene juegos instalados")
+        return
+
+    print(f"Juegos instalados en {pc}: {', '.join(instalados)}")
+
+    nombre = input("Nombre del juego a desinstalar (vacío para cancelar): ").strip()
+
+    if nombre == "":
+        print("Operación cancelada")
+        return
+
+    elegido = None
+
+    for instalado in instalados:
+        if instalado.lower() == nombre.lower():
+            elegido = instalado
+
+    if elegido is None:
+        print(f"'{nombre}' no esta instalado en {pc}")
+        return
+
+    if not confirmar(f"¿Desinstalar '{elegido}' de {pc}? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    desinstalar_juego(instalaciones, elegido, pc)
+
+    try:
+        guardar_instalaciones(instalaciones)
+    except OSError as error:
+        print(f"No se desinstalí el juego: {error}")
+        return
+
+    print(f"Juego '{elegido}' desinstalado de {pc}")
+
+
 def hacer_login() -> dict | None:
     """
     Conrtato: Carga las cuentas e inicia el proceso de login por consola
@@ -214,9 +382,13 @@ def menu_sesion(juegos: list[dict], usuario: dict) -> None:
         elif descripcion == "Agregar juego":
             agregar_juego(juegos, usuario)
         elif descripcion == "Eliminar juego":
-            eliminar_juego(juegos,usuario)
+            eliminar_juego(juegos, usuario)
         elif descripcion == "Consultar juegos instalados":
             print("[Pendiente] Consultar juegos instalados")
+        elif descripcion == "Instalar juego en una PC":
+            instalar_en_pc(juegos, usuario)
+        elif descripcion == "Desinstalar juego de una PC":
+            desinstalar_de_pc(juegos, usuario)
 
 
 def menu_inicial(juegos: list[dict]):
