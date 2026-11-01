@@ -118,7 +118,7 @@ Luego de la primera entrega se completarán las funciones administrativas:
 * [ ] Agregar / eliminar PC-Usuarios.
 * [x] Modificar juegos instalados.
 * [ ] Gestión de permisos.
-* [ ] Listados administrativos.
+* [x] Listados administrativos.
 * [ ] Pruebas y corrección de errores.
 
 ---
