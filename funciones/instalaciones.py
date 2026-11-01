@@ -1,4 +1,5 @@
 import json
+from tabulate import tabulate
 
 CAMPOS_INSTALACION = ["juego", "pc"]
 
@@ -141,3 +142,28 @@ def desinstalar_juego(instalaciones: list[dict], nombre_juego: str, pc: str) -> 
             return True
         i += 1
     return False
+
+
+def mostrar_instalaciones_por_pc(pcs: list[str], instalaciones: list[dict]) -> None:
+    """
+    Contrato: Muestra una tabla con la cantidad y los nombres de los juegos instalados en cada PC
+    Precondiciones: pcs es la lista de nombres de PC-Usuario
+    Postcondiciones: Imprime una fila por cada PC de pcs, en el orden que están, si no tiene juegos muestr "-"
+    """
+    filas = []
+
+    for pc in pcs:
+        nombres = juegos_instalados_en(instalaciones, pc)
+
+        if len(nombres) == 0:
+            detalle = "-"
+        else:
+            detalle = "\n".join(nombres)
+
+        filas.append([pc, len(nombres), detalle])
+
+    print(
+        tabulate(
+            filas, headers=["PC", "Cantidad", "Juegos instalados"], tablefmt="grid"
+        ),
+    )
