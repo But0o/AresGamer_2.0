@@ -6,7 +6,6 @@ from funciones.instalaciones import cargar_instalaciones
 from funciones.login import cargar_cuentas, iniciar_sesion
 
 TITULO = "===== AresGamer 2.0 ====="
-JUEGOS = cargar_juegos()
 
 opciones_no_logueado = {
     "1": "Login",
@@ -28,64 +27,129 @@ opciones_pc = {
     "3": "Cerrar sesion"
 }
 
-def menu_inicial():
-    usuario_actual = None
+
+def listar_juegos(juegos: list[dict], usuario: dict) -> None:
+    """
+    Contrato: Muestra los juegos recibidos segun el rol del usuario (el admin ve todos con sus instalaciones, la PC solo los suyos)
+    Precondiciones: juegos es una lista de juegos válidos. usuario es un diccionario con las claves "usuario" y "rol"
+    Postcondiciones: Imprime la tabla de juegos, o un mensaje de error si no se pudieron cargar las instalaciones
+    """
+    try: 
+        instalaciones = cargar_instalaciones()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar las instalaciones: {error}")
+        return
+
+    mostrar_juegos(juegos,instalaciones,usuario)
+
+def buscar_en_biblioteca(juegos: list[dict], usuario: dict) -> None:
+    """
+    Contrato: Pide un texto por consola y muestra los juegos que coinciden con el, según el rol del usuario
+    Precondiciones: juegos es una lista de juegos válidos. usuario es un diccionario con las claves "usuario" y "rol"
+    Postcondiciones: Imprime la tabla de resultados o un aviso si el texto esta vacío o no hay coincidencias
+    """
+    texto = input("Ingresa un nombre o categoría a buscar: ").strip().lower()
+
+    if texto == "":
+        print("Hay que escribir algo para buscar")
+        return
+
+    resultados = buscar_juegos(juegos,texto)
+
+    if len(resultados) == 0:
+        print(f"No se encontraron juegos para {texto}")
+        return
+
+    listar_juegos(resultados,usuario)
+
+
+def hacer_login() -> dict | None:
+    """
+    Conrtato: Carga las cuentas e inicia el proceso de login por consola
+    Precondiciones: Existe data/cuentas.json con cuentas válidas
+    Postcondiciones: Devuelva la cuenta si el login es correcto, None si no lo es
+    """
+    try:
+        cuentas = cargar_cuentas()
+    except(FileNotFoundError,ValueError) as error:
+        print(f"Error al cargar las cuentas: {error}")
+        return None
+
+    cuenta = iniciar_sesion(cuentas)
+
+    if cuenta is None:
+        print("Demasiados intentos fallidos, volviendo al menu")
+
+    return cuenta
+
+def menu_sesion(juegos:list[dict], usuario: dict) -> None:
+    """
+    Contrato: Muestra el menu del usuario logueado (admin o pc) y ejecula la opción elegida hasta que ceirra sesión
+    Precondiciones: juegos es una lista de juegos válidos. usuario es un diccionario con las claves "usuario" y "rol", donde "rol" vale "admin" o "pc"
+    Postcondiciones: Termina cuando el usuario elige "Cerrar sesión"
+    """
+    if usuario["rol"] == "admin":
+        opciones_menu = opciones_admin
+    else:
+        opciones_menu = opciones_pc
+
+    while True:
+        mostrar_menu(TITULO,opciones_menu)
+        opcion = pedir_opcion(opciones_menu)
+        descripcion = opciones_menu[opcion]
+
+        if descripcion == "Cerrar sesion":
+            print("Sesión Cerrada")
+            break
+        elif descripcion == "Listado de juegos" or descripcion == "Listado de juegos instalados":
+            listar_juegos(juegos,usuario)
+        elif descripcion == "Buscar juego":
+            buscar_en_biblioteca(juegos, usuario)
+        elif descripcion == "Agregar juego":
+            print("[Pendiente] Agregar juego")
+        elif descripcion == "Eliminar juego":
+            print("[Pendiente] Eliminar juego")
+        elif descripcion == "Consultar juegos instalados":
+            print("[Pendiente] Consultar juegos instalados")
+
+
+
+
+def menu_inicial(juegos: list[dict]):
+    """
+    Contrato: Muestra el menu inicial (Login / Salir) y si el login es correcto abre el menú del usuario
+    Precondiciones: juegos es una lista de juegos válidos
+    Postcondiciones: Termina cuando el usuario elige "Salir"
+    """
 
     while True:
         mostrar_menu(TITULO, opciones_no_logueado)
         opcion = pedir_opcion(opciones_no_logueado)
 
         if opcion == "1":
-            try:
-                cuentas = cargar_cuentas()
-                cuenta = iniciar_sesion(cuentas)
-            except (FileNotFoundError, ValueError) as error:
-                print("\nError al cargar las cuentas:", error)
-                continue
-
-            if cuenta is None:
-                print("\nDemasiados intentos fallidos. Volviendo al menu")
-            else:
-                usuario_actual = cuenta
-                print("\nBienvenido, " + cuenta["usuario"] + ".")
-
-                while usuario_actual is not None:
-                    if usuario_actual["rol"] == "admin":
-                        opciones_menu = opciones_admin
-                    else:
-                        opciones_menu = opciones_pc
-
-                    mostrar_menu(TITULO, opciones_menu)
-                    opcion_interna = pedir_opcion(opciones_menu)
-                    descripcion = opciones_menu[opcion_interna]
-
-                    if descripcion == "Listado de juegos" or descripcion == "Listado de juegos instalados":
-                        instalaciones = cargar_instalaciones()
-                        mostrar_juegos(JUEGOS, instalaciones, usuario_actual)
-                    elif descripcion == "Buscar juego":
-                        texto = input("\nIngresa nombre o categoria a buscar: ").strip()
-                        if texto == "":
-                            print("Tenes que escribir algo para buscar")
-                        else:
-                            resultados = buscar_juegos(JUEGOS, texto)
-                            if len(resultados) == 0:
-                                print("No se encontraron juegos para '" + texto + "'")
-                            else:
-                                instalaciones = cargar_instalaciones()
-                                mostrar_juegos(resultados, instalaciones, usuario_actual)
-                    elif descripcion == "Agregar juego":
-                        print("\n[Pendiente] Agregar juego.")
-                    elif descripcion == "Eliminar juego":
-                        print("\n[Pendiente] Eliminar juego.")
-                    elif descripcion == "Consultar juegos instalados":
-                        print("\n[Pendiente] Consultar juegos instalados.")
-                    elif descripcion == "Cerrar sesion":
-                        usuario_actual = None
-                        print("\nSesion cerrada.")
-
+            cuenta = hacer_login()
+            if cuenta is not None:
+                print(f"Bienvenido {cuenta['usuario']}")
+                menu_sesion(juegos,cuenta)
         elif opcion == "2":
-            print("\n Hasta luego.")
+            print("Hasta luego")
             break
 
+def main() -> None:
+    """
+    Contrato: Punto de entrada al programa, carga la bibloteca de juegos y arranca el menu inicial
+    Precondiciones: Se ejecuta desde la carpeta raiz del proyecto y existe data/juegos.json
+    Postcondiciones: Si no se puede cargar la biblioteca, muestra el motivo y sale, si no, termina cuando el usuario sale del menu inicial
+    """
+
+    try:
+        juegos = cargar_juegos()
+    except(FileNotFoundError,ValueError) as error:
+        print(f"Error al cargar la biblioteca de juegos: {error}")
+        return
+
+    menu_inicial(juegos)
+
 if __name__ == "__main__":
-    menu_inicial()
+    main()
+
