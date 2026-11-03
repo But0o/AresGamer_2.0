@@ -80,3 +80,34 @@ def iniciar_sesion(cuentas: list[dict]) -> dict | None:
         if intentos < MAX_INTENTOS:
             print("Intentos restantes:", MAX_INTENTOS - intentos)
     return None
+
+
+def guardar_cuentas(cuentas: list[dict]) -> None:
+    """
+    Contrato: Guarda todas las cuentas en data/cuentas.json
+    Precondiciones: cuentas es una lista de diccionarios con los campos usuario, clave y rol
+    Postcondiciones: El archivo queda con el contenido de cuentas, con el mismo formato que ya tiene. Lanza OSError (o una subclase) si no se pudo escribir
+    """
+    contenido = json.dumps(cuentas, indent=2, ensure_ascii=False)
+
+    try:
+        with open("data/cuentas.json", "w", encoding="utf-8") as archivo:
+            archivo.write(contenido)
+    except FileNotFoundError:
+        raise FileNotFoundError("No se encontro la carpeta data/.")
+    except PermissionError:
+        raise PermissionError("No hay permiso para escribir data/cuentas.json")
+    except OSError as error:
+        raise OSError(f"No se pudo guardar data/cuentas.json ({error})")
+
+
+def usuario_en_uso(cuentas: list[dict], usuario: str) -> bool:
+    """
+    Contrato: Indica si ya existe una cuenta con ese nombre de usuario, sin distinguir mayusculas (igual que el login)
+    Precondiciones: cuentas es una lista de diccionarios con el campo usuario. usuario es un string
+    Postcondiciones: Devuelve True si ya hay una cuenta con ese usuario, False si no
+    """
+    for cuenta in cuentas:
+        if cuenta["usuario"].lower() == usuario.lower():
+            return True
+    return False

@@ -10,6 +10,7 @@ from funciones.juegos import (
     buscar_juego_por_nombre,
     juegos_de_pc,
     juegos_sin_instalar,
+    pedir_texto,
 )
 from funciones.instalaciones import (
     cargar_instalaciones,
@@ -21,7 +22,12 @@ from funciones.instalaciones import (
     desinstalar_juego,
     mostrar_instalaciones_por_pc,
 )
-from funciones.login import cargar_cuentas, iniciar_sesion
+from funciones.login import (
+    cargar_cuentas,
+    iniciar_sesion,
+    guardar_cuentas,
+    usuario_en_uso,
+)
 
 TITULO = "===== AresGamer 2.0 ====="
 
@@ -36,7 +42,9 @@ opciones_admin = {
     "6": "Instalar juego en una PC",
     "7": "Desinstalar juego de una PC",
     "8": "Juegos sin instalar",
-    "9": "Cerrar sesion",
+    "9": "Agregar PC-Usuario",
+    "10": "Eliminar PC-Usuario",
+    "11": "Cerrar sesion",
 }
 
 opciones_pc = {
@@ -405,6 +413,106 @@ def listar_sin_instalar(juegos: list[dict], usuario: dict) -> None:
     mostrar_juegos(sin_instalar, instalaciones, usuario)
 
 
+def agregar_pc() -> None:
+    """
+    Contrato: Pide los datos de una PC-Usuario nueva, la agrega a las cuentas y guarda los cambios en data/cuentas.json
+    Precondiciones: Existe data/cuentas.json con formato válido
+    Postcondiciones: Si el admin confirma y el guardado funciona, cuentas.json queda con la cuenta nueva (rol "pc") al final. Si cancela, el nombre ya existe o el guardado falla, el archivo queda sin cambios
+    """
+    try:
+        cuentas = cargar_cuentas()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar las cuentas: {error}")
+        return
+
+    nombre = input("Nombre de la PC nueva (vacío para cancelar): ").strip()
+
+    while nombre != "" and usuario_en_uso(cuentas, nombre):
+        print(f"Ya existe una cuenta llamada '{nombre}'")
+        nombre = input("Nombre de la PC nueva (vacío para cancelar): ").strip()
+
+    if nombre == "":
+        print("Operación cancelada")
+        return
+
+    clave = pedir_texto("Clave: ")
+
+    print(f"PC-Usuario nueva: {nombre} | clave: {clave}")
+
+    if not confirmar("¿Crear la cuenta? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    cuentas.append({"usuario": nombre, "clave": clave, "rol": "pc"})
+
+    try:
+        guardar_cuentas(cuentas)
+    except OSError as error:
+        print(f"No se creó la cuenta: {error}")
+        return
+
+    print(f"PC-Usuario '{nombre}' creada correctamente")
+
+
+def eliminar_pc() -> None:
+    """
+    Contrato: Elimina una PC-Usuario de las cuentas junto con sus instalaciones, y guarda los cambios en data/cuentas.json y data/instalaciones.json
+    Precondiciones: Existe data/cuentas.json y data/instalaciones.json con formato válido
+    Postcondiciones: Si el admin confirma y el guardado funciona, la cuenta se quita de cuentas.json y sus juegos de instalaciones.json. Solo se pueden eliminar cuentas con rol "pc", nunca un admin. Si cancela o el guardado de cuentas falla, nada cambia
+    """
+    eleccion = elegir_pc()
+
+    if eleccion is None:
+        return
+
+    pc, instalaciones = eleccion
+
+    try:
+        cuentas = cargar_cuentas()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar las cuentas: {error}")
+        return
+
+    instalados = juegos_instalados_en(instalaciones, pc)
+
+    print(f"PC-Usuario a eliminar: {pc}")
+    if len(instalados) > 0:
+        print(
+            f"Tiene {len(instalados)} juego/s instalado/s: {', '.join(instalados)}. También se quitarán"
+        )
+
+    if not confirmar("¿Eliminarla definitivamente? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    restantes = []
+    for cuenta in cuentas:
+        if cuenta["usuario"] != pc:
+            restantes.append(cuenta)
+
+    try:
+        guardar_cuentas(restantes)
+    except OSError as error:
+        print(f"No se eliminó la PC: {error}")
+        return
+
+    if len(instalados) > 0:
+        quedan = []
+        for instalacion in instalaciones:
+            if instalacion["pc"] != pc:
+                quedan.append(instalacion)
+
+        try:
+            guardar_instalaciones(quedan)
+        except OSError as error:
+            print(
+                f"PC eliminada, pero no se pudieron actualizar las instalaciones: {error}"
+            )
+            return
+
+    print(f"PC-Usuario '{pc}' eliminada correctamente")
+
+
 def hacer_login() -> dict | None:
     """
     Contrato: Carga las cuentas e inicia el proceso de login por consola
@@ -463,6 +571,10 @@ def menu_sesion(juegos: list[dict], usuario: dict) -> None:
             instalar_en_pc(juegos, usuario)
         elif descripcion == "Desinstalar juego de una PC":
             desinstalar_de_pc(juegos, usuario)
+        elif descripcion == "Agregar PC-Usuario":
+            agregar_pc()
+        elif descripcion == "Eliminar PC-Usuario":
+            eliminar_pc()
 
 
 def menu_inicial(juegos: list[dict]):
