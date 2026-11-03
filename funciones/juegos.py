@@ -87,7 +87,7 @@ def cargar_juegos() -> list[dict]:
         with open("data/juegos.json", "r", encoding="utf-8") as archivo:
             juegos = json.load(archivo)
     except FileNotFoundError:
-        raise FileNotFoundError("No se econtro el archivo data/juegos.json")
+        raise FileNotFoundError("No se encontró el archivo data/juegos.json")
     except json.JSONDecodeError:
         raise ValueError("juegos.json tiene un formato inválido")
 
@@ -207,7 +207,7 @@ def pedir_peso() -> str:
             and partes[1].upper() in UNIDADES_PESO
         ):
             return partes[0] + " " + partes[1].upper()
-        print("Formato inválido. Escibi un número y la unidad (ej: 10 MB, 2 GB)")
+        print("Formato inválido. Escribí un número y la unidad (ej: 10 MB, 2 GB)")
 
 
 def pedir_datos_juego(juegos: list[dict]) -> dict | None:
@@ -235,3 +235,35 @@ def pedir_datos_juego(juegos: list[dict]) -> dict | None:
         "fecha_lanzamiento": fecha,
         "peso": peso,
     }
+
+
+def juegos_de_pc(juegos: list[dict], instalaciones: list[dict], pc: str) -> list[dict]:
+    """
+    Contrato: Devuelve los juegos de la biblioteca que están instalados en una Pc
+    Precondiciones: juegos es la lista devuelta por cargar_juegos. instalaciones es la lista devuelta por cargar_instalaciones
+    Postcondiciones: Devuelve una lista nueva con los juegos instalados de esa PC (vacía si no tiene ninguno)
+    """
+    resultado = []
+
+    for instalacion in instalaciones:
+        if instalacion["pc"] == pc:
+            juego = buscar_juego(instalacion["juego"], juegos)
+            if juego is not None:
+                resultado.append(juego)
+
+    return resultado
+
+
+def juegos_sin_instalar(juegos: list[dict], instalaciones: list[dict]) -> list[dict]:
+    """
+    Contrato: Devuelve los juegos de la biblioteca que no están instalados en ninguna PC
+    Precondiciones: juegos es la lista devuelta por cargar_juegos. instalaciones es la lista devuelta por cargar_instalaciones
+    Postcondiciones: Devuelve una lista nueva con los juegos sin instalar (vacía si estan todos instalados)
+    """
+    resultado = []
+
+    for juego in juegos:
+        if len(pcs_de_juego(juego["nombre"], instalaciones)) == 0:
+            resultado.append(juego)
+
+    return resultado

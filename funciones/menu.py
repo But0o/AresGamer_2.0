@@ -3,7 +3,7 @@
 from tabulate import tabulate
 
 
-def mostrar_menu(titulo, opciones):
+def mostrar_menu(titulo: str, opciones: dict[str, str]) -> None:
     """
     Contrato: Muestra por consola un titulo y una tabla con las opciones del menu
     Precondiciones:titulo es un string. opciones es un diccionario {numero: descripcion}, ambos string
@@ -20,7 +20,7 @@ def mostrar_menu(titulo, opciones):
     # headers y talbefmt son parametreos de tabulate.
 
 
-def pedir_opcion(opciones):
+def pedir_opcion(opciones: dict[str, str]) -> str:
     """
     Contrato: Pide al usuario una opcion hasta que ingrese una que exista en el menu
     Precondiciones: opciones es un diccionario no vacio cuyas claves son strings
