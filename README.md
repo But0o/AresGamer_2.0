@@ -92,6 +92,8 @@ AresGamer2.0/
 │
 ├── .gitignore
 ├── README.md
+├── pyproject.toml
+├── uv.lock
 └── requirements.txt
 ```
 
@@ -115,7 +117,7 @@ La primera entrega tendrá como objetivo contar con la **idea y estructura princ
 Luego de la primera entrega se completarán las funciones administrativas:
 
 * [x] Agregar / eliminar juegos.
-* [ ] Agregar / eliminar PC-Usuarios.
+* [x] Agregar / eliminar PC-Usuarios.
 * [x] Modificar juegos instalados.
 * [ ] Gestión de permisos.
 * [x] Listados administrativos.
@@ -125,15 +127,24 @@ Luego de la primera entrega se completarán las funciones administrativas:
 
 ## 🚀 Ejecución
 
-Instalar las dependencias:
+El proyecto usa [uv](https://docs.astral.sh/uv/) para manejar Python (3.14) y las dependencias.
+
+Crear el entorno e instalar las dependencias (solo la primera vez):
+
+```bash
+uv sync
+```
+
+Ejecutar el programa (desde la carpeta raíz del proyecto):
+
+```bash
+uv run main.py
+```
+
+Sin uv, también se puede con pip:
 
 ```bash
 pip install -r requirements.txt
-```
-
-Ejecutar el programa:
-
-```bash
 python main.py
 ```
 
