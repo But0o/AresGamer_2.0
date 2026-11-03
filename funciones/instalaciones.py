@@ -50,3 +50,46 @@ def pcs_de_juego(nombre_juego: str, instalaciones: list[dict]) -> list[str]:
         if instalado["juego"] == nombre_juego:
             pcs.append(instalado["pc"])
     return pcs
+
+
+def guardar_instalaciones(instalaciones: list[dict]) -> None:
+    """
+    Contrato: Guarda el registro de instalaciones en data/instalaciones.json
+    Precondiciones: instalaciones es una lista de diccionarios con las claves "juego" y "pc"
+    Postcondiciones: El archivo queda con el contenido de instalaciones
+    """
+    filas = []
+    for instalacion in instalaciones:
+        juego = json.dumps(instalacion["juego"], ensure_ascii=False)
+        pc = json.dumps(instalacion["pc"], ensure_ascii=False)
+        filas.append("  { " + f'"juego": {juego}, "pc": {pc}' + " }")
+
+    if len(filas) == 0:
+        contenido = "[]"
+    else:
+        contenido = "[\n" + ",\n".join(filas) + "\n]"
+
+    try:
+        with open("data/instalaciones.json" "w", encoding="utf-8") as archivo:
+            archivo.write(contenido)
+    except FileNotFoundError:
+        raise FileNotFoundError("No se encontro la carpeta data/.")
+    except PermissionError:
+        raise PermissionError("No hay permiso para escribir data/instalaciones.json")
+    except OSError as error:
+        raise OSError(f"No se pudo guardar data/instalaciones.json ({error})")
+
+
+def quitar_instalaciones_de_juego(instalaciones: list[dict], nombre_juego: str) -> list[dict]:
+    """
+    Contrato: Devuelve las instalaciones sin las que corresponden a un juego
+    Precondiciones: instalaciones es la lista devuelta por cargar_instalaciones
+    Postcondiciones: Devuelve una lista nueva con todas las instalaciones cuyo juego es distinto a nombre_juego
+    """
+    restantes = []
+
+    for instalacion in instalaciones:
+        if instalacion["juego"] != nombre_juego:
+            restantes.append(instalacion)
+
+    return restantes

@@ -2,6 +2,7 @@
 
 from tabulate import tabulate
 
+
 def mostrar_menu(titulo, opciones):
     """
     Contrato: Muestra por consola un titulo y una tabla con las opciones del menu
@@ -15,8 +16,8 @@ def mostrar_menu(titulo, opciones):
 
     print()
     print(titulo)
-    print(tabulate(filas, headers=["Opciones", "Descripcion"], tablefmt="grid")) 
-    #headers y talbefmt son parametreos de tabulate.
+    print(tabulate(filas, headers=["Opciones", "Descripcion"], tablefmt="grid"))
+    # headers y talbefmt son parametreos de tabulate.
 
 
 def pedir_opcion(opciones):
@@ -27,7 +28,24 @@ def pedir_opcion(opciones):
     """
 
     while True:
-        elegida = input("\nElegi una opcion: ").strip() # strip limpia los espacios que el usuario puede llegar a tipear
+        elegida = input(
+            "\nElegi una opcion: "
+        ).strip()  # strip limpia los espacios que el usuario puede llegar a tipear
         if elegida in opciones:
             return elegida
         print("Opcion invalida. Intenta de nuevo.")
+
+
+def confirmar(mensaje: str) -> bool:
+    """
+    Contrato: Hace una pregunta de si o no y repite hasta recibir una respuesta válida
+    Precondiciones: mensaje es el texto de la pregunta
+    Postcondiciones: Devuelve True si el usuario responde "s" o "si", o False si responde "n" o "no"
+    """
+    while True:
+        respuesta = input(mensaje).strip().lower()
+        if respuesta == "s" or respuesta == "si":
+            return True
+        elif respuesta == "n" or respuesta == "no":
+            return False
+        print("Rspuesta inválida, responde s/si o n/no ")
