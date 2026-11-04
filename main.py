@@ -16,6 +16,7 @@ from funciones.instalaciones import (
     cargar_instalaciones,
     guardar_instalaciones,
     quitar_instalaciones_de_juego,
+    quitar_instalaciones_de_pc,
     pcs_de_juego,
     juegos_instalados_en,
     instalar_juego,
@@ -23,10 +24,14 @@ from funciones.instalaciones import (
     mostrar_instalaciones_por_pc,
 )
 from funciones.login import (
+    ADMIN_ORIGINAL,
     cargar_cuentas,
     iniciar_sesion,
     guardar_cuentas,
     usuario_en_uso,
+    cuenta_activa,
+    buscar_cuenta_por_usuario,
+    mostrar_estado_pcs,
 )
 
 TITULO = "===== AresGamer 2.0 ====="
@@ -44,7 +49,10 @@ opciones_admin = {
     "8": "Juegos sin instalar",
     "9": "Agregar PC-Usuario",
     "10": "Eliminar PC-Usuario",
-    "11": "Cerrar sesion",
+    "11": "Bloquear/desbloquear PC-Usuario",
+    "12": "Otorgar permiso de administrador",
+    "13": "Quitar permiso de administrador",
+    "14": "Cerrar sesion",
 }
 
 opciones_pc = {
@@ -497,13 +505,8 @@ def eliminar_pc() -> None:
         return
 
     if len(instalados) > 0:
-        quedan = []
-        for instalacion in instalaciones:
-            if instalacion["pc"] != pc:
-                quedan.append(instalacion)
-
         try:
-            guardar_instalaciones(quedan)
+            guardar_instalaciones(quitar_instalaciones_de_pc(instalaciones, pc))
         except OSError as error:
             print(
                 f"PC eliminada, pero no se pudieron actualizar las instalaciones: {error}"
@@ -511,6 +514,168 @@ def eliminar_pc() -> None:
             return
 
     print(f"PC-Usuario '{pc}' eliminada correctamente")
+
+
+def bloquear_desbloquear_pc() -> None:
+    """
+    Contrato: Cambia el acceso de una PC-Usuario (activa a bloqueada o al reves) y guarda el cambio en data/cuentas.json
+    Precondiciones: Existe data/cuentas.json con formato válido
+    Postcondiciones: Si el admin confirma y el guardado funciona, la cuenta queda con el acceso contrario al que tenia. Solo se ofrecen cuentas con rol "pc", nunca un admin. Si cancela o el guardado falla, el archivo queda sin cambios
+    """
+    try:
+        cuentas = cargar_cuentas()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar las cuentas: {error}")
+        return
+
+    mostrar_estado_pcs(cuentas)
+
+    pc = pedir_pc(cuentas)
+
+    if pc is None:
+        print("Operación cancelada")
+        return
+
+    cuenta = buscar_cuenta_por_usuario(cuentas, pc)
+
+    if cuenta_activa(cuenta):
+        accion = "Bloquear"
+        resultado = "bloqueada"
+    else:
+        accion = "Desbloquear"
+        resultado = "desbloqueada"
+
+    if not confirmar(f"¿{accion} {pc}? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    cuenta["activa"] = not cuenta_activa(cuenta)
+
+    try:
+        guardar_cuentas(cuentas)
+    except OSError as error:
+        print(f"No se cambió el acceso de la PC: {error}")
+        return
+
+    print(f"PC-Usuario '{pc}' {resultado} correctamente")
+
+
+def otorgar_admin() -> None:
+    """
+    Contrato: Convierte una PC-Usuario en administrador y guarda los cambios en data/cuentas.json y data/instalaciones.json
+    Precondiciones: Existe data/cuentas.json y data/instalaciones.json con formato válido
+    Postcondiciones: Si el admin confirma y el guardado funciona, la cuenta queda con rol "admin" y sin instalaciones, porque deja de ser una PC-Usuario. Una PC bloqueada no se puede convertir hasta desbloquearla. Si cancela o el guardado de cuentas falla, nada cambia
+    """
+    try:
+        cuentas = cargar_cuentas()
+        instalaciones = cargar_instalaciones()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar los datos: {error}")
+        return
+
+    pc = pedir_pc(cuentas)
+
+    if pc is None:
+        print("Operación cancelada")
+        return
+
+    cuenta = buscar_cuenta_por_usuario(cuentas, pc)
+
+    if not cuenta_activa(cuenta):
+        print(f"{pc} está bloqueada, primero hay que desbloquearla")
+        return
+
+    instalados = juegos_instalados_en(instalaciones, pc)
+
+    print(f"{pc} va a tener acceso completo y dejará de ser una PC-Usuario")
+    if len(instalados) > 0:
+        print(
+            f"Tiene {len(instalados)} juego/s instalado/s: {', '.join(instalados)}. Se quitarán de sus instalaciones"
+        )
+
+    if not confirmar("¿Otorgar permiso de administrador? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    cuenta["rol"] = "admin"
+
+    try:
+        guardar_cuentas(cuentas)
+    except OSError as error:
+        print(f"No se otorgó el permiso: {error}")
+        return
+
+    if len(instalados) > 0:
+        try:
+            guardar_instalaciones(quitar_instalaciones_de_pc(instalaciones, pc))
+        except OSError as error:
+            print(
+                f"Permiso otorgado, pero no se pudieron actualizar las instalaciones: {error}"
+            )
+            return
+
+    print(f"'{pc}' ahora es administrador")
+
+
+def quitar_admin(usuario: dict) -> None:
+    """
+    Contrato: Convierte otra cuenta de administrador en PC-Usuario y guarda el cambio en data/cuentas.json
+    Precondiciones: Existe data/cuentas.json con formato válido. usuario es el diccionario del admin logueado
+    Postcondiciones: Si el admin confirma y el guardado funciona, la cuenta elegida queda con rol "pc". El admin logueado no puede quitarse el permiso a si mismo, asi siempre queda al menos un administrador, y a la cuenta ADMIN_ORIGINAL no se le puede quitar nunca. Si cancela o el guardado falla, el archivo queda sin cambios
+    """
+    try:
+        cuentas = cargar_cuentas()
+    except (FileNotFoundError, ValueError) as error:
+        print(f"Error al cargar las cuentas: {error}")
+        return
+
+    admins = []
+    for cuenta in cuentas:
+        if (
+            cuenta["rol"] == "admin"
+            and cuenta["usuario"] != usuario["usuario"]
+            and cuenta["usuario"].lower() != ADMIN_ORIGINAL
+        ):
+            admins.append(cuenta["usuario"])
+
+    if len(admins) == 0:
+        print(
+            "No hay administradores a los que se les pueda quitar el permiso "
+            f"(ni a vos mismo ni a la cuenta '{ADMIN_ORIGINAL}')"
+        )
+        return
+
+    print(f"Administradores disponibles: {', '.join(admins)}")
+
+    elegida = None
+
+    while elegida is None:
+        nombre = input("Nombre de la cuenta (vacío para cancelar): ").strip()
+
+        if nombre == "":
+            print("Operación cancelada")
+            return
+
+        for admin in admins:
+            if admin.lower() == nombre.lower():
+                elegida = admin
+
+        if elegida is None:
+            print(f"'{nombre}' no es una opción válida")
+
+    if not confirmar(f"¿Quitarle el permiso de administrador a {elegida}? (s/n): "):
+        print("Operación cancelada")
+        return
+
+    buscar_cuenta_por_usuario(cuentas, elegida)["rol"] = "pc"
+
+    try:
+        guardar_cuentas(cuentas)
+    except OSError as error:
+        print(f"No se quitó el permiso: {error}")
+        return
+
+    print(f"'{elegida}' ahora es una PC-Usuario")
 
 
 def hacer_login() -> dict | None:
@@ -575,6 +740,12 @@ def menu_sesion(juegos: list[dict], usuario: dict) -> None:
             agregar_pc()
         elif descripcion == "Eliminar PC-Usuario":
             eliminar_pc()
+        elif descripcion == "Bloquear/desbloquear PC-Usuario":
+            bloquear_desbloquear_pc()
+        elif descripcion == "Otorgar permiso de administrador":
+            otorgar_admin()
+        elif descripcion == "Quitar permiso de administrador":
+            quitar_admin(usuario)
 
 
 def menu_inicial(juegos: list[dict]):

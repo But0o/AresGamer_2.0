@@ -98,6 +98,21 @@ def quitar_instalaciones_de_juego(
     return restantes
 
 
+def quitar_instalaciones_de_pc(instalaciones: list[dict], pc: str) -> list[dict]:
+    """
+    Contrato: Devuelve las instalaciones sin las que corresponden a una PC
+    Precondiciones: instalaciones es la lista devuelta por cargar_instalaciones
+    Postcondiciones: Devuelve una lista nueva con todas las instalaciones cuya PC es distinta a pc
+    """
+    restantes = []
+
+    for instalacion in instalaciones:
+        if instalacion["pc"] != pc:
+            restantes.append(instalacion)
+
+    return restantes
+
+
 def juegos_instalados_en(instalaciones: list[dict], pc: str) -> list[str]:
     """
     Contrato: Devuelve los nombres de los juegos instalados en una PC

@@ -1,16 +1,18 @@
 """Login: carga de cuentas e inicio de sesion"""
 
 import json
+from tabulate import tabulate
 
 MAX_INTENTOS = 3
 CAMPOS_CUENTA = ["usuario", "clave", "rol"]
 ROLES_VALIDOS = ["admin", "pc"]
+ADMIN_ORIGINAL = "admin"
 
 
 def cargar_cuentas() -> list[dict]:
     """
     Contrato: Carga las cuentas desde data/cuentas.json y valida la estructura de cada una
-    Precondiciones: Existe data/cuentas.json con una lista de diccionarios. Cada cuenta tiene los campos usuario, clave y rol. El rol es "admin" o "pc"
+    Precondiciones: Existe data/cuentas.json con una lista de diccionarios. Cada cuenta tiene los campos usuario, clave y rol. El rol es "admin" o "pc". El campo activa es opcional y, si esta, es true o false
     Postcondiciones: Devuelve la lista de cuentas. Lanza FileNotFoundError si falta el archivo. Lanza ValueError si el json es inválido o alguna cuenta es incorrecta
     """
     try:
@@ -36,7 +38,18 @@ def cargar_cuentas() -> list[dict]:
                 )
         if cuenta["rol"] not in ROLES_VALIDOS:
             raise ValueError("cuentas.json: rol inválido")
+        if not isinstance(cuenta.get("activa", True), bool):
+            raise ValueError("cuentas.json: el campo 'activa' debe ser true o false")
     return cuentas
+
+
+def cuenta_activa(cuenta: dict) -> bool:
+    """
+    Contrato: Indica si una cuenta puede iniciar sesion
+    Precondiciones: cuenta es un diccionario devuelto por cargar_cuentas
+    Postcondiciones: Devuelve False si la cuenta esta bloqueada. Una cuenta sin el campo activa se considera activa
+    """
+    return cuenta.get("activa", True)
 
 
 def buscar_cuenta(cuentas: list[dict], usuario: str, clave: str) -> dict | None:
@@ -62,7 +75,7 @@ def iniciar_sesion(cuentas: list[dict]) -> dict | None:
     """
     Contrato: Pide usuario y clave por consola hasta un maximo de MAX_INTENTOS intentos
     Precondiciones: cuentas es una lista de diccionarios con los campos usuario, clave y rol
-    Postcondiciones: Devuelve la cuenta si las credenciales son correctas. Devuelve None si se agotan los intentos. Imprime mensaje de error o intentos restantes
+    Postcondiciones: Devuelve la cuenta si las credenciales son correctas y no esta bloqueada. Devuelve None si se agotan los intentos. Imprime mensaje de error o intentos restantes
     """
     intentos = 0
     while intentos < MAX_INTENTOS:
@@ -73,9 +86,12 @@ def iniciar_sesion(cuentas: list[dict]) -> dict | None:
             print("Hay que completar los campos usuario y clave")
         else:
             cuenta = buscar_cuenta(cuentas, usuario, clave)
-            if cuenta != None:
+            if cuenta is None:
+                print("Usuario o clave incorrectos")
+            elif cuenta_activa(cuenta):
                 return cuenta
-            print("Usuario o clave incorrectos")
+            else:
+                print("Esta cuenta está bloqueada, consultá con el administrador")
         intentos += 1
         if intentos < MAX_INTENTOS:
             print("Intentos restantes:", MAX_INTENTOS - intentos)
@@ -111,3 +127,34 @@ def usuario_en_uso(cuentas: list[dict], usuario: str) -> bool:
         if cuenta["usuario"].lower() == usuario.lower():
             return True
     return False
+
+
+def buscar_cuenta_por_usuario(cuentas: list[dict], usuario: str) -> dict | None:
+    """
+    Contrato: Busca una cuenta por su nombre de usuario, sin distinguir mayusculas
+    Precondiciones: cuentas es una lista de diccionarios con el campo usuario. usuario es un string
+    Postcondiciones: Devuelve el diccionario de la cuenta (no una copia) o None si no existe
+    """
+    for cuenta in cuentas:
+        if cuenta["usuario"].lower() == usuario.lower():
+            return cuenta
+    return None
+
+
+def mostrar_estado_pcs(cuentas: list[dict]) -> None:
+    """
+    Contrato: Muestra una tabla con las PC-Usuario y si estan activas o bloqueadas
+    Precondiciones: cuentas es la lista devuelta por cargar_cuentas
+    Postcondiciones: Imprime una fila por cada cuenta con rol "pc", en el orden del archivo
+    """
+    filas = []
+
+    for cuenta in cuentas:
+        if cuenta["rol"] == "pc":
+            if cuenta_activa(cuenta):
+                estado = "activa"
+            else:
+                estado = "bloqueada"
+            filas.append([cuenta["usuario"], estado])
+
+    print(tabulate(filas, headers=["PC", "Acceso"], tablefmt="grid"))
