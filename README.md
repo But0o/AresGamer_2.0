@@ -34,7 +34,7 @@ Cuenta con dos tipos de usuarios:
 * Crear y eliminar PC-Usuarios.
 * Consultar cuentas y juegos instalados.
 * Asignar o quitar juegos de las PC-Usuario.
-* Gestionar permisos.
+* Gestionar permisos: bloquear o desbloquear PC-Usuarios, y otorgar o quitar el permiso de administrador.
 
 ### 🖥️ PC-Usuario
 
@@ -119,7 +119,7 @@ Luego de la primera entrega se completarán las funciones administrativas:
 * [x] Agregar / eliminar juegos.
 * [x] Agregar / eliminar PC-Usuarios.
 * [x] Modificar juegos instalados.
-* [ ] Gestión de permisos.
+* [x] Gestión de permisos.
 * [x] Listados administrativos.
 * [ ] Pruebas y corrección de errores.
 
