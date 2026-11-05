@@ -7,6 +7,10 @@ env/
 #cache de python
 __pycache__/
 *.pyc
+.pytest_cache/
+
+#Temporales de guardado de datos
+data/*.tmp
 
 #Config del editor
 .vscode/
